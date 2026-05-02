@@ -2965,6 +2965,11 @@ spec:
                                 x-kubernetes-list-map-keys:
                                 - name
                                 x-kubernetes-list-type: map
+                              schedulingGroup:
+                                properties:
+                                  podGroupName:
+                                    type: string
+                                type: object
                               securityContext:
                                 properties:
                                   appArmorProfile:
@@ -3939,18 +3944,6 @@ spec:
                                 x-kubernetes-list-map-keys:
                                 - name
                                 x-kubernetes-list-type: map
-                              workloadRef:
-                                properties:
-                                  name:
-                                    type: string
-                                  podGroup:
-                                    type: string
-                                  podGroupReplicaKey:
-                                    type: string
-                                required:
-                                - name
-                                - podGroup
-                                type: object
                             required:
                             - containers
                             type: object
@@ -4377,6 +4370,9 @@ spec:
           periodSeconds: 20
         name: manager
         ports:
+        - containerPort: 8081
+          name: health
+          protocol: TCP
         - containerPort: 9443
           name: webhook-server
           protocol: TCP

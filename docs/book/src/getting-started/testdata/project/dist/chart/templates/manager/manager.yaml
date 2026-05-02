@@ -89,8 +89,10 @@ spec:
         {{- end }}
         command:
         - /manager
-        image: "{{ .Values.manager.image.repository }}:{{ .Values.manager.image.tag }}"
-        imagePullPolicy: {{ .Values.manager.image.pullPolicy }}
+        image: "{{ .Values.manager.image.repository }}{{- if not (contains "@" .Values.manager.image.repository) }}:{{ .Values.manager.image.tag | default .Chart.AppVersion }}{{- end }}"
+        {{- with .Values.manager.image.pullPolicy }}
+        imagePullPolicy: {{ . }}
+        {{- end }}
         livenessProbe:
           httpGet:
             path: /healthz
@@ -98,7 +100,10 @@ spec:
           initialDelaySeconds: 15
           periodSeconds: 20
         name: manager
-        ports: []
+        ports:
+        - containerPort: 8081
+          name: health
+          protocol: TCP
         readinessProbe:
           httpGet:
             path: /readyz
@@ -129,7 +134,7 @@ spec:
         {{- else }}
         {}
         {{- end }}
-      serviceAccountName: {{ include "project.resourceName" (dict "suffix" "controller-manager" "context" $) }}
+      serviceAccountName: {{ include "project.serviceAccountName" . }}
       {{- if and (hasKey .Values.manager "terminationGracePeriodSeconds") (ne .Values.manager.terminationGracePeriodSeconds nil) }}
       terminationGracePeriodSeconds: {{ .Values.manager.terminationGracePeriodSeconds }}
       {{- end }}

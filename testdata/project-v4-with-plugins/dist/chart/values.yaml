@@ -17,7 +17,9 @@ manager:
 
   image:
     repository: controller
-    tag: latest
+    ## Image tag (defaults to Chart.appVersion if not set)
+    ##
+    # tag: ""
     pullPolicy: IfNotPresent
 
   ## Arguments
@@ -122,12 +124,37 @@ manager:
 ## RBAC configuration
 ##
 rbac:
+  ## RBAC resource scope
+  ## - false (default): ClusterRole/ClusterRoleBinding (all namespaces)
+  ## - true: Role/RoleBinding (release namespace only)
+  ##
+  namespaced: false
+
   ## Helper roles for CRD management (admin/editor/viewer)
   ##
   helpers:
     ## Install convenience admin/editor/viewer roles for CRDs
     ##
     enable: false
+
+## ServiceAccount configuration
+##
+serviceAccount:
+  # Install default ServiceAccount provided
+  enable: true
+
+  ## Existing ServiceAccount name (only when enable=false)
+  ## Note: When enable=true, respects nameOverride/fullnameOverride
+  ##
+  # name: ""
+
+  ## Custom ServiceAccount annotations
+  ##
+  # annotations: {}
+
+  ## Custom ServiceAccount labels
+  ##
+  # labels: {}
 
 ## Custom Resource Definitions
 ##
